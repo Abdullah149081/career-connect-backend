@@ -7,7 +7,6 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from debug_toolbar.toolbar import debug_toolbar_urls
 from .views import api_root_view
-from .migrate_view import run_migrations
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -25,7 +24,6 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", api_root_view),
-    path("run-migrations/", run_migrations, name="run-migrations"),
     path("api/v1/", include("api.urls"), name="api-root"),
     path(
         "swagger/",
