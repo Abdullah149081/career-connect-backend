@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from .serializers import (
     UserRegistrationSerializer,
@@ -108,3 +109,31 @@ class UserProfileViewSet(viewsets.ReadOnlyModelViewSet):
         if self.request.user.user_type == "job_seeker":
             return User.objects.filter(id=self.request.user.id)
         return User.objects.filter(is_active=True, is_verified=True)
+
+
+class LogoutView(APIView):
+    """Logout view that blacklists the refresh token."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response(
+                    {"error": "Refresh token is required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(
+                {"message": "Successfully logged out."},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"error": "Invalid token or token already blacklisted."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

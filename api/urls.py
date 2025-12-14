@@ -20,6 +20,7 @@ from accounts.views import (
     EmailVerificationView,
     CustomTokenObtainPairView,
     UserProfileView,
+    LogoutView,
 )
 
 # Create main router
@@ -48,6 +49,7 @@ urlpatterns = [
         "accounts/verify-email/", EmailVerificationView.as_view(), name="verify-email"
     ),
     path("accounts/login/", CustomTokenObtainPairView.as_view(), name="token-obtain"),
+    path("accounts/logout/", LogoutView.as_view(), name="logout"),
     path("accounts/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("accounts/profile/", UserProfileView.as_view(), name="user-profile"),
     # Djoser authentication endpoints (alternative authentication method)
