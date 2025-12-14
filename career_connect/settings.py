@@ -32,6 +32,17 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
+
+# Ensure ALLOWED_HOSTS is always a list
+if not isinstance(ALLOWED_HOSTS, list):
+    ALLOWED_HOSTS = [ALLOWED_HOSTS]
+
+# Add Vercel domains
+ALLOWED_HOSTS += [
+    "career-connect-backend-blond.vercel.app",
+    ".vercel.app",  # Allow all Vercel subdomains
+]
+
 AUTH_USER_MODEL = "accounts.User"
 
 # Application definition
