@@ -91,7 +91,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "career_connect.wsgi.application"
+WSGI_APPLICATION = "career_connect.wsgi.app"
 
 INTERNAL_IPS = [
     "127.0.0.1",
