@@ -132,9 +132,11 @@ class UserSerializer(serializers.ModelSerializer):
             "company_name",
             "bio",
             "is_verified",
+            "is_staff",
+            "is_superuser",
             "date_joined",
         )
-        read_only_fields = ("id", "email", "is_verified", "date_joined")
+        read_only_fields = ("id", "email", "is_verified", "is_staff", "is_superuser", "date_joined")
 
 
 class EmailVerificationSerializer(serializers.Serializer):
