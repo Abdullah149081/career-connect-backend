@@ -161,29 +161,42 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="")
+CLOUDINARY_API_KEY = config("CLOUDINARY_API_KEY", default="")
+CLOUDINARY_API_SECRET = config("CLOUDINARY_API_SECRET", default="")
+
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME", default=""),
-    "API_KEY": config("CLOUDINARY_API_KEY", default=""),
-    "API_SECRET": config("CLOUDINARY_API_SECRET", default=""),
+    "CLOUD_NAME": CLOUDINARY_CLOUD_NAME,
+    "API_KEY": CLOUDINARY_API_KEY,
+    "API_SECRET": CLOUDINARY_API_SECRET,
 }
 
-# Configure Cloudinary
-if CLOUDINARY_STORAGE["CLOUD_NAME"]:
+# Configure Cloudinary if credentials are provided
+if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
+    import cloudinary
     cloudinary.config(
-        cloud_name=CLOUDINARY_STORAGE["CLOUD_NAME"],
-        api_key=CLOUDINARY_STORAGE["API_KEY"],
-        api_secret=CLOUDINARY_STORAGE["API_SECRET"],
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
         secure=True,
     )
-    # Use Cloudinary for media files in production
+    # Use Cloudinary for all file uploads
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = None  # No local media folder needed
+    MEDIA_URL = "https://res.cloudinary.com/{}/".format(CLOUDINARY_CLOUD_NAME)
+    MEDIA_ROOT = None
+    
+    print(f"✅ Cloudinary configured: {CLOUDINARY_CLOUD_NAME}")
 else:
-    # Fallback for local development without Cloudinary
+    # Local development fallback
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
+    
+    if not DEBUG:
+        print("⚠️ WARNING: Cloudinary not configured in production!")
+        print(f"CLOUDINARY_CLOUD_NAME: {'SET' if CLOUDINARY_CLOUD_NAME else 'MISSING'}")
+        print(f"CLOUDINARY_API_KEY: {'SET' if CLOUDINARY_API_KEY else 'MISSING'}")
+        print(f"CLOUDINARY_API_SECRET: {'SET' if CLOUDINARY_API_SECRET else 'MISSING'}")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
