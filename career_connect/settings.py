@@ -177,8 +177,17 @@ cloudinary.config(
 # Use Cloudinary for media files
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# Media files configuration
+# On serverless platforms (like Vercel), use Cloudinary URL directly
+# Don't use local MEDIA_ROOT as the filesystem is read-only
+if not DEBUG:
+    # Production: Use Cloudinary
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = None  # No local media folder on serverless
+else:
+    # Development: Can use local media folder
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -235,10 +244,12 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 FRONTEND_URL = config("FRONTEND_URL")
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+# Allow both local development and production frontends
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000,http://127.0.0.1:3000",
+    cast=Csv(),
+)
 CORS_ALLOW_CREDENTIALS = True
 
 SWAGGER_SETTINGS = {
