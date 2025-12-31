@@ -165,10 +165,6 @@ CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config("CLOUDINARY_CLOUD_NAME"),
     'API_KEY': config("CLOUDINARY_API_KEY"),
     'API_SECRET': config("CLOUDINARY_API_SECRET"),
-    'SECURE': True,
-    'STATIC_TAG': False,
-    'STATICFILES_MANIFEST_ROOT': None,
-    'MAGIC_FILE_PATH': 'magic',
 }
 
 cloudinary.config(
@@ -180,16 +176,12 @@ cloudinary.config(
 
 # Media storage setting - Use Cloudinary for all file uploads
 # This is critical for serverless deployments (Vercel) where filesystem is read-only
-DEFAULT_FILE_STORAGE = "career_connect.storage.CloudinaryMediaStorage"
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-# Media URL will be handled by Cloudinary
+# Media URL and ROOT
+# Even though we use Cloudinary, we need to set MEDIA_ROOT for compatibility
 MEDIA_URL = "/media/"
-# Do not set MEDIA_ROOT in production to prevent any filesystem operations
-if DEBUG:
-    MEDIA_ROOT = BASE_DIR / "media"
-else:
-    # In production (Vercel), explicitly set to None to prevent filesystem access
-    MEDIA_ROOT = None
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

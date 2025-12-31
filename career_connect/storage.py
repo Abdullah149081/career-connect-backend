@@ -5,9 +5,7 @@ This ensures proper file handling in serverless environments like Vercel.
 
 import os
 from django.conf import settings
-from django.core.files.storage import Storage
 from cloudinary_storage.storage import MediaCloudinaryStorage
-import cloudinary.uploader
 
 
 class CloudinaryMediaStorage(MediaCloudinaryStorage):
@@ -19,33 +17,8 @@ class CloudinaryMediaStorage(MediaCloudinaryStorage):
     """
 
     def __init__(self, *args, **kwargs):
+        # Initialize parent class which handles Cloudinary configuration
         super().__init__(*args, **kwargs)
-    
-    def _save(self, name, content):
-        """
-        Override save to upload directly to Cloudinary without any filesystem operations.
-        """
-        try:
-            # Get the folder path from the name
-            folder_path = os.path.dirname(name) if os.path.dirname(name) else None
-            
-            # Upload directly to Cloudinary
-            upload_options = {
-                'resource_type': 'auto',
-                'folder': folder_path,
-            }
-            
-            # If content has a file attribute, use it; otherwise use content directly
-            file_to_upload = content.file if hasattr(content, 'file') else content
-            
-            # Upload to Cloudinary
-            result = cloudinary.uploader.upload(file_to_upload, **upload_options)
-            
-            # Return the public_id or the full URL
-            return result.get('public_id', name)
-        except Exception as e:
-            # Fallback to parent implementation if custom upload fails
-            return super()._save(name, content)
     
     def path(self, name):
         """
