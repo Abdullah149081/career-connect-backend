@@ -92,13 +92,16 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         request = self.context.get("request")
-        if request and request.user.user_type != "job_seeker":
-            raise serializers.ValidationError("Only job seekers can apply for jobs.")
+        
+        # Only validate user type and duplicate application during creation
+        if not self.instance:  # This means it's a CREATE operation
+            if request and request.user.user_type != "job_seeker":
+                raise serializers.ValidationError("Only job seekers can apply for jobs.")
 
-        # Check if already applied
-        job = attrs.get("job")
-        if JobApplication.objects.filter(job=job, applicant=request.user).exists():
-            raise serializers.ValidationError("You have already applied for this job.")
+            # Check if already applied
+            job = attrs.get("job")
+            if JobApplication.objects.filter(job=job, applicant=request.user).exists():
+                raise serializers.ValidationError("You have already applied for this job.")
 
         return attrs
 
