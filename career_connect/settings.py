@@ -183,21 +183,12 @@ if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
     # Use Cloudinary for all file uploads
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
     MEDIA_URL = "https://res.cloudinary.com/{}/".format(CLOUDINARY_CLOUD_NAME)
-    # Set a dummy MEDIA_ROOT to avoid errors, but it won't be used
-    MEDIA_ROOT = "/tmp/media"  # Temporary location, not actually used by Cloudinary
-    
-    print(f"✅ Cloudinary configured: {CLOUDINARY_CLOUD_NAME}")
+    MEDIA_ROOT = "/tmp/media"  # Dummy path, not used by Cloudinary
 else:
     # Local development fallback
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
-    
-    if not DEBUG:
-        print("⚠️ WARNING: Cloudinary not configured in production!")
-        print(f"CLOUDINARY_CLOUD_NAME: {'SET' if CLOUDINARY_CLOUD_NAME else 'MISSING'}")
-        print(f"CLOUDINARY_API_KEY: {'SET' if CLOUDINARY_API_KEY else 'MISSING'}")
-        print(f"CLOUDINARY_API_SECRET: {'SET' if CLOUDINARY_API_SECRET else 'MISSING'}")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
