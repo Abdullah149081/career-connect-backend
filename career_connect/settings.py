@@ -182,7 +182,7 @@ if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
     )
     # Use Cloudinary for all file uploads
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-    MEDIA_URL = "https://res.cloudinary.com/{}/".format(CLOUDINARY_CLOUD_NAME)
+    MEDIA_URL = "/media/"  # Cloudinary will generate proper URLs
     MEDIA_ROOT = "/tmp/media"  # Dummy path, not used by Cloudinary
 else:
     # Local development fallback
