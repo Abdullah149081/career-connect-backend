@@ -37,22 +37,22 @@ AUTH_USER_MODEL = "accounts.User"
 # Application definition
 
 INSTALLED_APPS = [
-    "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # Third-party apps
+    "cloudinary_storage",
+    "cloudinary",
     "drf_yasg",
     "django_filters",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "djoser",
-    "cloudinary_storage",
-    "cloudinary",
     "corsheaders",
     "debug_toolbar",
     # Local apps
@@ -161,6 +161,13 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Cloudinary Configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': config("CLOUDINARY_API_KEY"),
+    'API_SECRET': config("CLOUDINARY_API_SECRET"),
+    'SECURE': True,
+}
+
 cloudinary.config(
     cloud_name=config("CLOUDINARY_CLOUD_NAME"),
     api_key=config("CLOUDINARY_API_KEY"),
@@ -168,11 +175,15 @@ cloudinary.config(
     secure=True,
 )
 
-# Media storage setting
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+# Media storage setting - Use Cloudinary for all file uploads
+# This is critical for serverless deployments (Vercel) where filesystem is read-only
+DEFAULT_FILE_STORAGE = "career_connect.storage.CloudinaryMediaStorage"
 
+# Media URL will be handled by Cloudinary
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_ROOT is not used with Cloudinary in production
+if DEBUG:
+    MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
