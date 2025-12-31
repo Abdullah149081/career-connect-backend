@@ -112,11 +112,11 @@ INTERNAL_IPS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT", cast=int),
+        "NAME": config("DB_NAME", default=""),
+        "USER": config("DB_USER", default=""),
+        "PASSWORD": config("DB_PASSWORD", default=""),
+        "HOST": config("DB_HOST", default=""),
+        "PORT": config("DB_PORT", default=5432, cast=int),
     }
 }
 
@@ -183,7 +183,8 @@ if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
     # Use Cloudinary for all file uploads
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
     MEDIA_URL = "https://res.cloudinary.com/{}/".format(CLOUDINARY_CLOUD_NAME)
-    MEDIA_ROOT = None
+    # Set a dummy MEDIA_ROOT to avoid errors, but it won't be used
+    MEDIA_ROOT = "/tmp/media"  # Temporary location, not actually used by Cloudinary
     
     print(f"✅ Cloudinary configured: {CLOUDINARY_CLOUD_NAME}")
 else:
