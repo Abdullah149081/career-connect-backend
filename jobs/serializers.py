@@ -64,6 +64,7 @@ class JobListingSerializer(serializers.ModelSerializer):
 class JobApplicationSerializer(serializers.ModelSerializer):
     applicant_info = serializers.SerializerMethodField()
     job_title = serializers.CharField(source="job.title", read_only=True)
+    job_info = serializers.SerializerMethodField()
 
     class Meta:
         model = JobApplication
@@ -71,6 +72,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             "id",
             "job",
             "job_title",
+            "job_info",
             "applicant",
             "applicant_info",
             "resume",
@@ -80,6 +82,14 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("id", "applicant", "applied_at", "updated_at")
+    
+    def get_job_info(self, obj):
+        return {
+            "id": obj.job.id,
+            "title": obj.job.title,
+            "company": obj.job.employer.company_name if obj.job.employer else None,
+            "location": obj.job.location,
+        }
 
     def get_applicant_info(self, obj):
         return {
