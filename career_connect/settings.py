@@ -242,7 +242,7 @@ FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
 # Allow both local development and production frontends
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
-    default="http://localhost:3000,http://127.0.0.1:3000",
+    default="http://localhost:3000,http://127.0.0.1:3000,https://career-connect-seven.vercel.app",
     cast=Csv(),
 )
 CORS_ALLOW_CREDENTIALS = True
