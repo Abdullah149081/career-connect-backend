@@ -32,8 +32,9 @@ router.register("categories", JobCategoryViewSet, basename="categories")
 router.register("applications", JobApplicationViewSet, basename="applications")
 router.register("resumes", ResumeViewSet, basename="resumes")
 router.register("profiles", UserProfileViewSet, basename="profiles")
+router.register("reviews", EmployerReviewViewSet, basename="reviews")
 
-# Create nested router for job-specific reviews
+# Create nested router for job-specific reviews (deprecated - kept for backward compatibility)
 job_router = nested_routers.NestedDefaultRouter(router, "jobs", lookup="job")
 job_router.register("reviews", EmployerReviewViewSet, basename="job-reviews")
 
